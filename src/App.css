@@ -42,6 +42,7 @@
   --content-width: 962px;
   --footer-bg: #f5f5f5;
   --footer-text: #757575;
+  --text-tracking: -0.01em;
 }
 
 * {
@@ -149,7 +150,7 @@ body {
   font-size: 18px;
   font-weight: 400;
   line-height: normal;
-  letter-spacing: 0;
+  letter-spacing: var(--text-tracking);
 }
 
 .desktop-right-column {
@@ -200,23 +201,28 @@ body {
   font-size: 16px;
   font-weight: 400;
   line-height: normal;
-  letter-spacing: 0;
+  letter-spacing: var(--text-tracking);
 }
 
 .product-copy ul {
   margin: 0;
-  padding-left: 21px;
+  padding-left: 18px;
   color: var(--text-secondary);
   list-style: disc;
   font-family: '210 SoomyungjoOTF', 'Noto Serif KR Local', serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 27px;
-  letter-spacing: 0;
+  letter-spacing: var(--text-tracking);
 }
 
 .product-copy li {
   margin: 0;
+  word-break: keep-all;
+}
+
+.product-copy li::marker {
+  font-size: 0.6em;
 }
 
 .site-footer {
@@ -252,7 +258,7 @@ body {
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-  letter-spacing: 0;
+  letter-spacing: var(--text-tracking);
 }
 
 .mobile-view {
@@ -379,7 +385,7 @@ body {
     font-size: 14px;
     font-weight: 400;
     line-height: 27px;
-    letter-spacing: 0;
+    letter-spacing: var(--text-tracking);
     cursor: pointer;
   }
 
