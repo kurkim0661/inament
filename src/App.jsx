@@ -81,6 +81,17 @@ const DEFAULT_LAYOUT_VARS = {
 const isMobileViewport = () => (typeof window !== 'undefined' ? window.matchMedia(MOBILE_MEDIA_QUERY).matches : false);
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' ? window.matchMedia(REDUCED_MOTION_MEDIA_QUERY).matches : false;
+const scrollViewportToTop = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  if (typeof document !== 'undefined') {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }
+};
 
 const imagePreloadPromises = new Map();
 
@@ -217,16 +228,12 @@ function App() {
   };
 
   const handleObjectChange = (direction) => {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      });
-    }
-
     if (transitionPhase !== 'idle' || !isObjectReady) {
       return;
+    }
+
+    if (isMobile) {
+      scrollViewportToTop();
     }
 
     if (prefersReducedMotion()) {
@@ -264,6 +271,38 @@ function App() {
 
   const handleNext = () => {
     handleObjectChange('next');
+  };
+
+  const handleLogoClick = () => {
+    scrollViewportToTop();
+
+    if (objectIndex === 0 || transitionPhase !== 'idle') {
+      return;
+    }
+
+    if (prefersReducedMotion()) {
+      setIsObjectReady(false);
+      setObjectIndex(0);
+      return;
+    }
+
+    clearTransitionTimers();
+    setTransitionDirection('prev');
+    setTransitionPhase('exit');
+
+    const exitTimer = window.setTimeout(() => {
+      setIsObjectReady(false);
+      setObjectIndex(0);
+      setTransitionPhase('enter');
+
+      const enterTimer = window.setTimeout(() => {
+        setTransitionPhase('idle');
+      }, OBJECT_TRANSITION_ENTER_MS);
+
+      transitionTimersRef.current.push(enterTimer);
+    }, OBJECT_TRANSITION_EXIT_MS);
+
+    transitionTimersRef.current.push(exitTimer);
   };
 
   useEffect(() => {
@@ -308,6 +347,17 @@ function App() {
   }, [objectIndex]);
 
   useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+
+    scrollViewportToTop();
+    if (typeof window !== 'undefined') {
+      window.requestAnimationFrame(scrollViewportToTop);
+    }
+  }, [objectIndex, isMobile]);
+
+  useEffect(() => {
     if (PRODUCT_OBJECTS.length < 2) {
       return;
     }
@@ -344,7 +394,9 @@ function App() {
   return (
     <div className="page-root">
       <header className="site-header">
-        <img className="site-logo" src={logoBlack} alt="inament." loading="eager" data-node-id="2:150" />
+        <button className="site-logo-button" type="button" aria-label="Go to first object" onClick={handleLogoClick}>
+          <img className="site-logo" src={logoBlack} alt="inament." loading="eager" data-node-id="2:150" />
+        </button>
       </header>
 
       {!isMobile && (
