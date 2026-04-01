@@ -121,6 +121,7 @@ const PRODUCT_OBJECTS = [
   {
     id: 'wall-shelf',
     name: 'Wall Shelf',
+    sizeText: 'Size(mm) W560 x D162 x H526',
     detailTitle: '앤티크에서 영감을 받은 벽걸이 선반',
     bulletPoints: WALL_SHELF_BULLET_POINTS,
     images: [wallShelfMainImage, wallShelfDetailTopImage, wallShelfDetailBottomImage],
@@ -129,6 +130,7 @@ const PRODUCT_OBJECTS = [
   {
     id: 'kitchen-rack',
     name: 'Kitchen Rack',
+    sizeText: 'Size(mm) W495 x D250 x H520',
     detailTitle: '단정한 무게감의 스탠딩 키친랙',
     bulletPoints: KITCHEN_RACK_BULLET_POINTS,
     images: [kitchenRackImage1, kitchenRackImage2, kitchenRackImage3],
@@ -137,6 +139,7 @@ const PRODUCT_OBJECTS = [
   {
     id: 'pocket-tray',
     name: 'Pocket Tray',
+    sizeText: 'Size(mm) W100 x D100 x H20',
     detailTitle: '체리와 민트 빛 유리의 포켓 트레이',
     bulletPoints: POCKET_TRAY_BULLET_POINTS,
     images: [pocketTrayImage1, pocketTrayImage2, pocketTrayImage3],
@@ -145,6 +148,7 @@ const PRODUCT_OBJECTS = [
   {
     id: 'plain-shelf',
     name: 'Plain Shelf',
+    sizeText: 'Size(mm) W1200 x D285 x H865',
     detailTitle: '정갈한 오픈형 오크 수납장',
     bulletPoints: PLAIN_SHELF_BULLET_POINTS,
     images: [plainShelfImage1, plainShelfImage2, plainShelfImage3],
@@ -373,9 +377,12 @@ function App() {
                 <div className="main-image-wrap" data-node-id="2:103">
                   <img src={mainObjectImage} alt={currentObject.name} loading="eager" fetchPriority="high" decoding="async" />
                 </div>
-                <h1 className="product-title" data-node-id="2:18">
-                  {currentObject.name}
-                </h1>
+                <div className="product-title-block">
+                  <h1 className="product-title" data-node-id="2:18">
+                    {currentObject.name}
+                  </h1>
+                  <p className="product-size">{currentObject.sizeText}</p>
+                </div>
               </section>
 
               <section className="desktop-right-column" data-node-id="2:119">
@@ -427,9 +434,12 @@ function App() {
               </section>
 
               <section className="mobile-text-block" data-node-id="17:207">
-                <h1 className="product-title mobile-product-title" data-node-id="17:202">
-                  {currentObject.name}
-                </h1>
+                <div className="product-title-block mobile-product-title-block">
+                  <h1 className="product-title mobile-product-title" data-node-id="17:202">
+                    {currentObject.name}
+                  </h1>
+                  <p className="product-size mobile-product-size">{currentObject.sizeText}</p>
+                </div>
                 <ProductCopy
                   titleNodeId="17:205"
                   listNodeId="17:206"
