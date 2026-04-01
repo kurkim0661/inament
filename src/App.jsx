@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import mainImage from './assets/img-wall-shelf-1.jpg';
-import detailTopImage from './assets/img-wall-shelf-2.jpg';
-import detailBottomImage from './assets/img-wall-shelf-3.jpg';
+import wallShelfMainImage from './assets/objects/wall-shelf/main.jpg';
+import wallShelfDetailTopImage from './assets/objects/wall-shelf/detail-top.jpg';
+import wallShelfDetailBottomImage from './assets/objects/wall-shelf/detail-bottom.jpg';
+import woodLackFrontImage from './assets/objects/wood-lack/front.png';
 import logoBlack from './assets/logo-inament-black.svg';
 import logoFooter from './assets/logo-inament-footer.svg';
 import arrowLeftIcon from './assets/ic-arrow-left.svg';
@@ -10,12 +11,20 @@ import arrowRightIcon from './assets/ic-arrow-right.svg';
 const MOBILE_BREAKPOINT = 1160;
 const MOBILE_MEDIA_QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`;
 
-const BASE_BULLET_POINTS = [
+const WALL_SHELF_BULLET_POINTS = [
   '견고한 오크를 손으로 직접 조각하여 제작했습니다.',
   '티크 스테인으로 마감했습니다.',
   '벽에 안정적으로 밀착되도록 비례를 잡았습니다.',
   '두 개의 선반과 서랍으로 구성되어 있습니다.',
   '작은 물건을 올려두기에 안성맞춤입니다.',
+];
+
+const WOOD_LACK_BULLET_POINTS = [
+  '전면 우드 그레인 질감이 강조된 오브젝트입니다.',
+  '미니멀한 실루엣으로 공간에 가볍게 배치할 수 있습니다.',
+  '실제 촬영컷 추가 시 동일한 레이아웃 구조를 그대로 사용합니다.',
+  '현재는 전달받은 front 이미지 기반으로 미리보기 구성했습니다.',
+  '오브젝트별 레이아웃 변수로 높이/비율을 독립 제어할 수 있습니다.',
 ];
 
 const DEFAULT_LAYOUT_VARS = {
@@ -43,82 +52,36 @@ const DEFAULT_LAYOUT_VARS = {
 
 const isMobileViewport = () => (typeof window !== 'undefined' ? window.matchMedia(MOBILE_MEDIA_QUERY).matches : false);
 
-const createMockImageAsset = ({ label, startColor, endColor }) => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${startColor}"/><stop offset="100%" stop-color="${endColor}"/></linearGradient></defs><rect width="1200" height="1200" fill="url(#g)"/><text x="600" y="600" text-anchor="middle" dominant-baseline="middle" fill="rgba(255,255,255,0.86)" font-size="64" font-family="Pretendard, Arial, sans-serif">${label}</text></svg>`;
-
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-};
-
 const PRODUCT_OBJECTS = [
   {
     id: 'wall-shelf',
     name: 'Wall Shelf',
     detailTitle: '앤티크에서 영감을 받은 벽걸이 선반',
-    bulletPoints: BASE_BULLET_POINTS,
-    images: [mainImage, detailTopImage, detailBottomImage],
+    bulletPoints: WALL_SHELF_BULLET_POINTS,
+    images: [wallShelfMainImage, wallShelfDetailTopImage, wallShelfDetailBottomImage],
     layoutVars: {},
   },
   {
-    id: 'mock-object-01',
-    name: 'Mock Object 01',
-    detailTitle: '테스트용 오브젝트 01',
-    bulletPoints: [
-      '오브젝트 단위 전환 확인을 위한 가짜 데이터입니다.',
-      '레이아웃 구조는 그대로 유지됩니다.',
-      '메인/디테일 이미지 3장을 한 세트로 전환합니다.',
-      '버튼 클릭 시 이전·다음 오브젝트로 이동합니다.',
-      '실제 이미지 파일 교체만 하면 동일하게 동작합니다.',
-    ],
-    images: [
-      createMockImageAsset({ label: 'Mock 01 / Main', startColor: '#7D8597', endColor: '#A5A58D' }),
-      createMockImageAsset({ label: 'Mock 01 / Detail A', startColor: '#4A4E69', endColor: '#9A8C98' }),
-      createMockImageAsset({ label: 'Mock 01 / Detail B', startColor: '#6B705C', endColor: '#B7B7A4' }),
-    ],
+    id: 'wood-lack',
+    name: 'Wood Lack',
+    detailTitle: '우드 랙 오브젝트',
+    bulletPoints: WOOD_LACK_BULLET_POINTS,
+    images: [woodLackFrontImage, woodLackFrontImage, woodLackFrontImage],
     layoutVars: {
-      '--desktop-main-height': '780px',
-      '--desktop-left-gap': '24px',
-      '--desktop-right-gap': '24px',
+      '--desktop-main-height': '760px',
+      '--desktop-left-gap': '28px',
+      '--desktop-right-gap': '28px',
       '--desktop-detail-gap': '12px',
-      '--desktop-detail-top-height': '384px',
-      '--desktop-detail-bottom-height': '384px',
+      '--desktop-detail-top-height': '374px',
+      '--desktop-detail-bottom-height': '374px',
       '--desktop-detail-top-transform': 'none',
+      '--desktop-detail-bottom-transform': 'none',
       '--desktop-copy-height': '206px',
       '--desktop-copy-padding': '12px 0 0',
       '--mobile-stack-gap': '8px',
-      '--mobile-image-1-ratio': '402 / 540',
-      '--mobile-image-2-ratio': '402 / 470',
-      '--mobile-image-3-ratio': '402 / 470',
-    },
-  },
-  {
-    id: 'mock-object-02',
-    name: 'Mock Object 02',
-    detailTitle: '테스트용 오브젝트 02',
-    bulletPoints: [
-      '오브젝트 세트가 정상 순환되는지 확인합니다.',
-      '모바일/데스크톱 모두 동일한 데이터 소스를 씁니다.',
-      '현재는 검증을 위해 SVG 기반 가짜 이미지를 사용합니다.',
-      '향후 실제 상품 이미지 세트로 쉽게 교체 가능합니다.',
-      '텍스트도 오브젝트별로 독립적으로 관리됩니다.',
-    ],
-    images: [
-      createMockImageAsset({ label: 'Mock 02 / Main', startColor: '#355070', endColor: '#6D597A' }),
-      createMockImageAsset({ label: 'Mock 02 / Detail A', startColor: '#B56576', endColor: '#E56B6F' }),
-      createMockImageAsset({ label: 'Mock 02 / Detail B', startColor: '#6C757D', endColor: '#ADB5BD' }),
-    ],
-    layoutVars: {
-      '--desktop-main-height': '760px',
-      '--desktop-left-gap': '40px',
-      '--desktop-right-gap': '40px',
-      '--desktop-detail-gap': '20px',
-      '--desktop-detail-top-height': '370px',
-      '--desktop-detail-bottom-height': '370px',
-      '--desktop-copy-height': '230px',
-      '--desktop-copy-padding': '16px 0 0',
-      '--mobile-stack-gap': '12px',
       '--mobile-image-1-ratio': '402 / 500',
-      '--mobile-image-2-ratio': '402 / 460',
-      '--mobile-image-3-ratio': '402 / 520',
+      '--mobile-image-2-ratio': '402 / 500',
+      '--mobile-image-3-ratio': '402 / 500',
     },
   },
 ];
