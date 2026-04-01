@@ -110,6 +110,10 @@ body {
   will-change: transform, opacity, filter;
 }
 
+.object-stage {
+  position: relative;
+}
+
 .object-transition--idle {
   pointer-events: auto;
 }
@@ -149,6 +153,51 @@ body {
   animation-name: object-enter-from-left;
 }
 
+.object-stage--loading {
+  pointer-events: none;
+}
+
+.object-stage--loading .desktop-content-frame,
+.object-stage--loading .desktop-footer,
+.object-stage--loading .mobile-main {
+  visibility: hidden;
+}
+
+.object-loading-indicator {
+  display: none;
+}
+
+.object-stage--loading .object-loading-indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.64);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.object-loading-spinner {
+  width: 26px;
+  height: 26px;
+  border: 2px solid rgba(117, 117, 117, 0.2);
+  border-top-color: rgba(117, 117, 117, 0.82);
+  border-radius: 50%;
+  animation: object-loading-spin 0.85s linear infinite;
+}
+
+.object-loading-text {
+  color: rgba(117, 117, 117, 0.95);
+  font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
 @keyframes object-enter-from-right {
   0% {
     transform: translate3d(26px, 0, 0);
@@ -160,6 +209,16 @@ body {
     transform: translate3d(0, 0, 0);
     opacity: 1;
     filter: none;
+  }
+}
+
+@keyframes object-loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -307,9 +366,9 @@ body {
 
 .product-copy ul {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 0;
   color: var(--text-secondary);
-  list-style: disc;
+  list-style: none;
   font-family: '210 SoomyungjoOTF', 'Noto Serif KR Local', serif;
   font-size: 14px;
   font-weight: 400;
@@ -319,11 +378,23 @@ body {
 
 .product-copy li {
   margin: 0;
+  position: relative;
+  min-height: 27px;
+  padding-left: 12px;
   word-break: keep-all;
 }
 
-.product-copy li::marker {
-  font-size: 0.6em;
+.product-copy li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(27px / 2);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateY(-50%);
+  opacity: 0.78;
 }
 
 .site-footer {
@@ -389,6 +460,10 @@ body {
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;
+  }
+
+  .object-loading-spinner {
+    animation: none;
   }
 }
 
@@ -499,13 +574,16 @@ body {
     align-items: center;
     min-height: 51px;
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    background: rgba(245, 245, 245, 0.58);
-    border-top: 0.5px solid rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(20px) saturate(145%);
-    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.22) 100%),
+      rgba(239, 234, 230, 0.18);
+    border-top: 1px solid rgba(255, 255, 255, 0.62);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+    backdrop-filter: blur(4px) saturate(180%);
+    -webkit-backdrop-filter: blur(4px) saturate(180%);
     box-shadow:
-      0 -8px 24px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.62);
+      0 -10px 20px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72);
   }
 
   .mobile-bottom-nav::before {
@@ -517,11 +595,37 @@ body {
     opacity: 0.8;
     background: linear-gradient(
       -45deg,
-      rgba(255, 255, 255, 0.66) 0%,
-      rgba(255, 255, 255, 0.34) 33%,
-      rgba(255, 255, 255, 0.14) 68%,
-      rgba(255, 255, 255, 0.04) 100%
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.38) 28%,
+      rgba(255, 255, 255, 0.12) 58%,
+      rgba(255, 255, 255, 0.34) 100%
     );
+    mix-blend-mode: screen;
+  }
+
+  .mobile-bottom-nav::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.42);
+    background:
+      radial-gradient(
+        130% 90% at 50% -26%,
+        rgba(255, 255, 255, 0.48) 0%,
+        rgba(255, 255, 255, 0.14) 56%,
+        rgba(255, 255, 255, 0) 100%
+      ),
+      linear-gradient(
+        -45deg,
+        rgba(255, 132, 126, 0.09) 0%,
+        rgba(255, 214, 119, 0.07) 24%,
+        rgba(144, 185, 255, 0.08) 54%,
+        rgba(255, 255, 255, 0) 82%
+      );
+    filter: blur(10px);
+    opacity: 0.5;
   }
 
   .mobile-nav-btn {
@@ -552,6 +656,7 @@ body {
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .mobile-bottom-nav {
       background: rgba(245, 245, 245, 0.94);
+      border-bottom: 0;
     }
   }
 }

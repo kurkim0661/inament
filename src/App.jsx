@@ -21,6 +21,7 @@ const MOBILE_MEDIA_QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`;
 const REDUCED_MOTION_MEDIA_QUERY = '(prefers-reduced-motion: reduce)';
 const OBJECT_TRANSITION_EXIT_MS = 140;
 const OBJECT_TRANSITION_ENTER_MS = 260;
+const OBJECT_STORAGE_KEY = 'inament:current-object-id';
 
 const WALL_SHELF_BULLET_POINTS = [
   '견고한 오크를 손으로 직접 조각하여 제작했습니다.',
@@ -81,15 +82,39 @@ const isMobileViewport = () => (typeof window !== 'undefined' ? window.matchMedi
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' ? window.matchMedia(REDUCED_MOTION_MEDIA_QUERY).matches : false;
 
-const preloadObjectImages = (objectData) => {
-  if (typeof window === 'undefined' || !objectData) {
-    return;
+const imagePreloadPromises = new Map();
+
+const preloadImage = (imageSrc) => {
+  if (!imageSrc) {
+    return Promise.resolve();
   }
 
-  objectData.images.forEach((imageSrc) => {
+  if (imagePreloadPromises.has(imageSrc)) {
+    return imagePreloadPromises.get(imageSrc);
+  }
+
+  const preloadPromise = new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      resolve();
+      return;
+    }
+
     const image = new Image();
+    image.onload = () => resolve();
+    image.onerror = () => resolve();
     image.src = imageSrc;
   });
+
+  imagePreloadPromises.set(imageSrc, preloadPromise);
+  return preloadPromise;
+};
+
+const preloadObjectImages = (objectData) => {
+  if (!objectData) {
+    return Promise.resolve();
+  }
+
+  return Promise.all(objectData.images.map((imageSrc) => preloadImage(imageSrc))).then(() => undefined);
 };
 
 const PRODUCT_OBJECTS = [
@@ -127,6 +152,24 @@ const PRODUCT_OBJECTS = [
   },
 ];
 
+const getInitialObjectIndex = () => {
+  if (typeof window === 'undefined') {
+    return 0;
+  }
+
+  try {
+    const storedObjectId = window.localStorage.getItem(OBJECT_STORAGE_KEY);
+    if (!storedObjectId) {
+      return 0;
+    }
+
+    const restoredIndex = PRODUCT_OBJECTS.findIndex((objectData) => objectData.id === storedObjectId);
+    return restoredIndex >= 0 ? restoredIndex : 0;
+  } catch {
+    return 0;
+  }
+};
+
 function ProductCopy({ titleNodeId, listNodeId, detailTitle, bulletPoints, className = '' }) {
   return (
     <article className={`product-copy ${className}`.trim()}>
@@ -158,7 +201,8 @@ function FooterContent({ logoNodeId, textNodeId, copyrightNodeId, className = ''
 
 function App() {
   const [isMobile, setIsMobile] = useState(isMobileViewport);
-  const [objectIndex, setObjectIndex] = useState(0);
+  const [objectIndex, setObjectIndex] = useState(getInitialObjectIndex);
+  const [isObjectReady, setIsObjectReady] = useState(false);
   const [transitionPhase, setTransitionPhase] = useState('idle');
   const [transitionDirection, setTransitionDirection] = useState('next');
   const transitionTimersRef = useRef([]);
@@ -169,11 +213,20 @@ function App() {
   };
 
   const handleObjectChange = (direction) => {
-    if (transitionPhase !== 'idle') {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      });
+    }
+
+    if (transitionPhase !== 'idle' || !isObjectReady) {
       return;
     }
 
     if (prefersReducedMotion()) {
+      setIsObjectReady(false);
       setObjectIndex((prev) =>
         direction === 'next' ? (prev + 1) % PRODUCT_OBJECTS.length : (prev - 1 + PRODUCT_OBJECTS.length) % PRODUCT_OBJECTS.length,
       );
@@ -185,6 +238,7 @@ function App() {
     setTransitionPhase('exit');
 
     const exitTimer = window.setTimeout(() => {
+      setIsObjectReady(false);
       setObjectIndex((prev) =>
         direction === 'next' ? (prev + 1) % PRODUCT_OBJECTS.length : (prev - 1 + PRODUCT_OBJECTS.length) % PRODUCT_OBJECTS.length,
       );
@@ -235,14 +289,41 @@ function App() {
   }, []);
 
   useEffect(() => {
+    let isCancelled = false;
+    setIsObjectReady(false);
+
+    preloadObjectImages(PRODUCT_OBJECTS[objectIndex]).then(() => {
+      if (!isCancelled) {
+        setIsObjectReady(true);
+      }
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [objectIndex]);
+
+  useEffect(() => {
     if (PRODUCT_OBJECTS.length < 2) {
       return;
     }
 
     const nextIndex = (objectIndex + 1) % PRODUCT_OBJECTS.length;
     const prevIndex = (objectIndex - 1 + PRODUCT_OBJECTS.length) % PRODUCT_OBJECTS.length;
-    preloadObjectImages(PRODUCT_OBJECTS[nextIndex]);
-    preloadObjectImages(PRODUCT_OBJECTS[prevIndex]);
+    void preloadObjectImages(PRODUCT_OBJECTS[nextIndex]);
+    void preloadObjectImages(PRODUCT_OBJECTS[prevIndex]);
+  }, [objectIndex]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(OBJECT_STORAGE_KEY, PRODUCT_OBJECTS[objectIndex].id);
+    } catch {
+      // no-op (storage unavailable)
+    }
   }, [objectIndex]);
 
   const currentObject = PRODUCT_OBJECTS[objectIndex];
@@ -252,7 +333,9 @@ function App() {
     ...(currentObject.layoutVars ?? {}),
   };
   const isTransitioning = transitionPhase !== 'idle';
+  const isInteractionLocked = isTransitioning || !isObjectReady;
   const transitionClassName = `object-transition object-transition--${transitionPhase} object-transition--${transitionDirection}`;
+  const objectStageClassName = `${transitionClassName} object-stage${isObjectReady ? '' : ' object-stage--loading'}`;
 
   return (
     <div className="page-root">
@@ -268,7 +351,7 @@ function App() {
             aria-label="Previous object"
             data-node-id="2:27"
             onClick={handlePrevious}
-            disabled={isTransitioning}
+            disabled={isInteractionLocked}
           >
             <img src={arrowLeftIcon} alt="" aria-hidden="true" />
           </button>
@@ -279,12 +362,12 @@ function App() {
             aria-label="Next object"
             data-node-id="2:29"
             onClick={handleNext}
-            disabled={isTransitioning}
+            disabled={isInteractionLocked}
           >
             <img src={arrowRightIcon} alt="" aria-hidden="true" />
           </button>
 
-          <div className={transitionClassName}>
+          <div className={objectStageClassName}>
             <main className="desktop-content-frame" data-node-id="2:121">
               <section className="desktop-left-column" data-node-id="2:117">
                 <div className="main-image-wrap" data-node-id="2:103">
@@ -316,13 +399,20 @@ function App() {
             <footer className="site-footer desktop-footer" data-node-id="2:127">
               <FooterContent logoNodeId="2:152" textNodeId="2:24" copyrightNodeId="2:25" />
             </footer>
+
+            {!isObjectReady && (
+              <div className="object-loading-indicator" role="status" aria-live="polite">
+                <span className="object-loading-spinner" aria-hidden="true" />
+                <span className="object-loading-text">Loading object...</span>
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {isMobile && (
         <div className="mobile-view" data-node-id="2:162" style={currentLayoutVars}>
-          <div className={transitionClassName}>
+          <div className={objectStageClassName}>
             <main className="mobile-main">
               <section className="mobile-image-stack" data-node-id="17:201">
                 <div className="mobile-image mobile-image-1" data-node-id="2:174">
@@ -353,6 +443,13 @@ function App() {
                 <FooterContent logoNodeId="17:211" textNodeId="17:220" copyrightNodeId="17:221" className="mobile-footer-content" />
               </footer>
             </main>
+
+            {!isObjectReady && (
+              <div className="object-loading-indicator" role="status" aria-live="polite">
+                <span className="object-loading-spinner" aria-hidden="true" />
+                <span className="object-loading-text">Loading object...</span>
+              </div>
+            )}
           </div>
 
           <nav className="mobile-bottom-nav" data-node-id="17:195" aria-label="Previous and next object navigation">
@@ -362,7 +459,7 @@ function App() {
               aria-label="Previous object"
               data-node-id="17:193"
               onClick={handlePrevious}
-              disabled={isTransitioning}
+              disabled={isInteractionLocked}
             >
               <img src={arrowLeftIcon} alt="" aria-hidden="true" data-node-id="2:186" />
               <span data-node-id="17:191">Previous Object</span>
@@ -373,7 +470,7 @@ function App() {
               aria-label="Next object"
               data-node-id="17:194"
               onClick={handleNext}
-              disabled={isTransitioning}
+              disabled={isInteractionLocked}
             >
               <span data-node-id="2:190">Next Object</span>
               <img src={arrowRightIcon} alt="" aria-hidden="true" data-node-id="2:188" />
