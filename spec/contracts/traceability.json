@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-04-03T14:40:00.000Z",
+  "contracts": [
+    {
+      "contract_id": "layout-default-vars",
+      "source_path": "src/constants/layout.js",
+      "source_range": "L1-L32",
+      "spec_path": "spec/appendices/layout-invariants.md",
+      "verification_cmd": "npm test",
+      "last_verified_sha": "90667a1380cd8383428036fd07be9f9bebafc662",
+      "inference_flag": false
+    },
+    {
+      "contract_id": "base-spacing-and-frame-contract",
+      "source_path": "src/styles/base.css",
+      "source_range": "L37-L47",
+      "spec_path": "spec/appendices/layout-invariants.md",
+      "verification_cmd": "npm test",
+      "last_verified_sha": "90667a1380cd8383428036fd07be9f9bebafc662",
+      "inference_flag": false
+    },
+    {
+      "contract_id": "product-catalog-three-image-stage",
+      "source_path": "src/data/products.js",
+      "source_range": "L46-L83",
+      "spec_path": "spec/appendices/object-catalog-and-carousel.md",
+      "verification_cmd": "npm test",
+      "last_verified_sha": "90667a1380cd8383428036fd07be9f9bebafc662",
+      "inference_flag": false
+    },
+    {
+      "contract_id": "carousel-transition-state-machine",
+      "source_path": "src/hooks/useObjectCarousel.js",
+      "source_range": "L44-L151",
+      "spec_path": "spec/appendices/object-catalog-and-carousel.md",
+      "verification_cmd": "npm test",
+      "last_verified_sha": "90667a1380cd8383428036fd07be9f9bebafc662",
+      "inference_flag": false
+    },
+    {
+      "contract_id": "desktop-stage-rendering",
+      "source_path": "src/components/DesktopObjectStage.jsx",
+      "source_range": "L16-L70",
+      "spec_path": "spec/appendices/object-catalog-and-carousel.md",
+      "verification_cmd": "npm run build",
+      "last_verified_sha": "90667a1380cd8383428036fd07be9f9bebafc662",
+      "inference_flag": false
+    }
+  ]
+}
