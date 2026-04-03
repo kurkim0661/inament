@@ -27,7 +27,7 @@ for (const productId of ['wall-shelf', 'kitchen-rack', 'pocket-tray', 'plain-she
 const imageArrayMatches = [...productsSource.matchAll(/images:\s*\[([^\]]+)\]/g)];
 assert.ok(imageArrayMatches.length >= 4, 'Expected at least 4 product image arrays');
 for (const [index, match] of imageArrayMatches.entries()) {
-  const imageCount = match
+  const imageCount = match[1]
     .split(',')
     .map((part) => part.trim())
     .filter(Boolean).length;
