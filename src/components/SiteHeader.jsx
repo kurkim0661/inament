@@ -1,3 +1,5 @@
+import React from 'react';
+
 import logoBlack from '../assets/logo-inament-black.svg';
 
 export function SiteHeader({ onLogoClick }) {

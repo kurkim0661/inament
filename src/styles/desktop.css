@@ -11,7 +11,9 @@
     var(--desktop-frame-width, var(--content-width)),
     calc(var(--desktop-main-width, 625px) + var(--desktop-side-width, 321px) + var(--desktop-column-gap, 16px))
   );
-  min-width: calc(var(--desktop-main-width, 625px) + var(--desktop-side-width, 321px) + var(--desktop-column-gap, 16px));
+  min-width: calc(
+    var(--desktop-main-min-width, 625px) + var(--desktop-side-min-width, 321px) + var(--desktop-column-gap-min, 16px)
+  );
   height: var(--desktop-frame-height, 1019px);
   margin: 24px auto 0;
   display: grid;
@@ -56,7 +58,7 @@
 
 .desktop-left-column {
   width: var(--desktop-main-width, 625px);
-  min-width: var(--desktop-main-width, 625px);
+  min-width: var(--desktop-main-min-width, 625px);
   max-width: var(--desktop-main-width, 625px);
   display: flex;
   flex-direction: column;
@@ -72,14 +74,14 @@
 .main-image-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: var(--desktop-main-object-position, center);
   display: block;
 }
 
 .desktop-right-column {
   width: var(--desktop-side-width, 321px);
-  min-width: var(--desktop-side-width, 321px);
+  min-width: var(--desktop-side-min-width, 321px);
   max-width: var(--desktop-side-width, 321px);
   flex: 0 0 auto;
   display: flex;
@@ -89,7 +91,7 @@
 
 .desktop-detail-grid {
   width: var(--desktop-side-width, 321px);
-  min-width: var(--desktop-side-width, 321px);
+  min-width: var(--desktop-side-min-width, 321px);
   max-width: var(--desktop-side-width, 321px);
   height: calc(
     var(--desktop-detail-top-height, 393px) + var(--desktop-detail-bottom-height, 393px) + var(--desktop-detail-gap, 16px)
@@ -101,7 +103,7 @@
 
 .detail-image {
   width: var(--desktop-side-width, 321px);
-  min-width: var(--desktop-side-width, 321px);
+  min-width: var(--desktop-side-min-width, 321px);
   max-width: var(--desktop-side-width, 321px);
   overflow: hidden;
 }
@@ -117,7 +119,8 @@
 .detail-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   display: block;
 }
 
@@ -135,7 +138,7 @@
 
 .product-copy {
   width: var(--desktop-side-width, 321px);
-  min-width: var(--desktop-side-width, 321px);
+  min-width: var(--desktop-side-min-width, 321px);
   max-width: var(--desktop-side-width, 321px);
   height: var(--desktop-copy-height, 185px);
   padding: var(--desktop-copy-padding, 8px 0);

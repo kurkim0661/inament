@@ -1,4 +1,4 @@
-export const MOBILE_BREAKPOINT = 1160;
+export const MOBILE_BREAKPOINT = 768;
 export const MOBILE_MEDIA_QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`;
 export const REDUCED_MOTION_MEDIA_QUERY = '(prefers-reduced-motion: reduce)';
 export const OBJECT_TRANSITION_EXIT_MS = 140;
@@ -9,15 +9,19 @@ export const DEFAULT_LAYOUT_VARS = {
   '--desktop-frame-width': '962px',
   '--desktop-frame-height':
     'max(calc(var(--desktop-main-height, 78vh) + var(--desktop-left-gap, 32px) + var(--desktop-copy-height, 185px)), calc(var(--desktop-detail-top-height, 393px) + var(--desktop-detail-bottom-height, 393px) + var(--desktop-detail-gap, 16px) + var(--desktop-right-gap, 32px) + var(--desktop-copy-height, 185px)))',
-  '--desktop-main-width': '625px',
-  '--desktop-side-width': '321px',
-  '--desktop-column-gap': '16px',
-  '--desktop-detail-min-height': 'calc(var(--desktop-side-width, 321px) * 786 / 642)',
-  '--desktop-main-height':
-    'max(78vh, calc((var(--desktop-detail-min-height, 393px) * 2) + var(--desktop-detail-gap, 16px)))',
+  '--desktop-main-min-width': '625px',
+  '--desktop-side-min-width': '321px',
+  '--desktop-main-min-height': '802px',
+  '--desktop-main-height': 'max(var(--desktop-main-min-height, 802px), 78vh)',
+  '--desktop-main-width':
+    'max(var(--desktop-main-min-width, 625px), calc(var(--desktop-main-height, 78vh) * 625 / 802))',
+  '--desktop-side-width':
+    'max(var(--desktop-side-min-width, 321px), calc(var(--desktop-main-height, 78vh) * 321 / 802))',
+  '--desktop-column-gap-min': '16px',
+  '--desktop-column-gap': 'max(var(--desktop-column-gap-min, 16px), calc(var(--desktop-main-height, 78vh) * 16 / 802))',
   '--desktop-left-gap': '32px',
   '--desktop-right-gap': '32px',
-  '--desktop-detail-gap': '16px',
+  '--desktop-detail-gap': 'max(var(--desktop-column-gap-min, 16px), calc(var(--desktop-main-height, 78vh) * 16 / 802))',
   '--desktop-detail-top-height': 'calc((var(--desktop-main-height, 78vh) - var(--desktop-detail-gap, 16px)) / 2)',
   '--desktop-detail-bottom-height': 'calc((var(--desktop-main-height, 78vh) - var(--desktop-detail-gap, 16px)) / 2)',
   '--desktop-detail-top-transform': 'none',

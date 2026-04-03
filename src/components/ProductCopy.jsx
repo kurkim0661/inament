@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function ProductCopy({ titleNodeId, listNodeId, detailTitle, bulletPoints, className = '' }) {
   return (
     <article className={`product-copy ${className}`.trim()}>

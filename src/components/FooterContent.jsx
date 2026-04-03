@@ -1,3 +1,5 @@
+import React from 'react';
+
 import logoFooter from '../assets/logo-inament-footer.svg';
 
 export function FooterContent({ logoNodeId, textNodeId, copyrightNodeId, className = '' }) {

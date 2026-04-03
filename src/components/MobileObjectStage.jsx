@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { FooterContent } from './FooterContent';
 import { MobileBottomNav } from './MobileBottomNav';
 import { ProductCopy } from './ProductCopy';

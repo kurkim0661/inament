@@ -1,3 +1,5 @@
+import React from 'react';
+
 import arrowLeftIcon from '../assets/ic-arrow-left.svg';
 import arrowRightIcon from '../assets/ic-arrow-right.svg';
 

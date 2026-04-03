@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { DesktopObjectStage } from './components/DesktopObjectStage';
 import { MobileObjectStage } from './components/MobileObjectStage';
 import { SiteHeader } from './components/SiteHeader';

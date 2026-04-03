@@ -3,7 +3,7 @@
   opacity: 0.42;
 }
 
-@media (max-width: 1159px) {
+@media (max-width: 767px) {
   .desktop-view {
     display: none;
   }

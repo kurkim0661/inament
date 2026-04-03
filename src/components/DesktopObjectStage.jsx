@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { FooterContent } from './FooterContent';
 import { NavArrows } from './NavArrows';
 import { ProductCopy } from './ProductCopy';
