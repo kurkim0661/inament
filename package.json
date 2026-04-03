@@ -10,7 +10,9 @@
     "build:docs": "npm run build:pages && rm -rf docs && mkdir -p docs && cp -R dist/. docs/",
     "preview": "vite preview",
     "test:refactor": "node scripts/verify-refactor-architecture.mjs",
-    "test": "npm run test:refactor"
+    "test": "npm run test:refactor",
+    "verify:spec-governance": "node scripts/verify-spec-governance.mjs",
+    "validate:spec-traceability": "node scripts/validate-spec-traceability.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
