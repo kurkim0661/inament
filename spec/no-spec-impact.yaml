@@ -1,0 +1,6 @@
+change_id: template
+pr_ref: none
+touched_src_paths: []
+rationale: "Template file. Update all fields when using no-spec-impact mode."
+reviewer: "unassigned"
+date: "2026-04-03"
